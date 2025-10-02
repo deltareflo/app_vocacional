@@ -15,4 +15,4 @@ matplotlib==3.9.0
 SQLAlchemy==1.4.32
 weasyprint==62.3
 gunicorn==22.0.0
-
+Werkzeug==2.3.4
