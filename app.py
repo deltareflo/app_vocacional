@@ -12,7 +12,6 @@ from models import Usuarios, db, SegUser, ContactoSegUser, ConsultaSegUser, Eval
 from dataframe_all import dataframe_p1, cambio_baremo_one_p1, p1_dict_one, dataframe_p2, cambio_baremo_one_p2, \
     dataframe_p3, dataframe_s3, cambio_baremo_one_s3, cambio_baremo_one_p3, dataframe_s2, cambio_baremo_one_s2, \
         valores_neo
-from rist_raven import info_test, carga_datos_Raven_gral,carga_datos_Raven_avanzadas, carga_archivo_enviado
 from vocacional import carga_vocacional
 from forms import EnvioMailForm, SignupForm, LoginForm, ContactoForm, SegForm, ConsultaForm, EvalForm, EvalTipoForm, ResultadoForm, \
     TipoAcompForm, AcompForm, InfoForm, ProfeForm, RavenGral, CustomTestForm, TestItemForm, ResetPasswordForm, ResetPasswordRequestForm
@@ -20,14 +19,8 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from decorators import admin_required
 from sqlalchemy import desc
 from flask_mail import Mail, Message
-#from send_whatsapp import envia_what
 import io
 import uuid
-#para whatsapp
-"""import webbrowser
-import pyautogui
-import time
-import pyperclip"""
 
 def insert_contacto():
     pass
