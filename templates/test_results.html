@@ -1,0 +1,79 @@
+{% extends 'base2.html' %}
+
+{% block body %}
+<div class="pcoded-inner-content">
+    <div class="main-body">
+        <div class="page-wrapper">
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="text-center">Resultados de Tests Vocacional</h5>
+                                
+                            </div>
+                            <div class="card-block">
+                                <form class="form-inline mb-3" method="GET" action="{{ url_for('show_vocacional_results') }}">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Buscar por nombre, apellido o cédula" name="search" value="{{ search_query }}">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="dt-responsive table-responsive">
+                                    <table id="simpletable" class="table table-striped table-bordered nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Cédula</th>
+                                                <th>UUID</th>
+                                                <th>Fecha de Creación</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for result in results %}
+                                            <tr>
+                                                <td>{{ result.personal_data.nombre }}</td>
+                                                <td>{{ result.personal_data.cedula }}</td>
+                                                <td>{{ result.onet_test.uuid }}</td>
+                                                <td>{{ result.onet_test.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('informe_vocacional', r1_id=result.onet_test.uuid)  }}" class="btn btn-primary btn-sm">Informe</a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if pagination.has_prev %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('show_test_results', page=pagination.prev_num, search=search_query) }}">Anterior</a></li>
+                                        {% endif %}
+                                        {% for page_num in pagination.iter_pages() %}
+                                        {% if page_num %}
+                                        {% if page_num == pagination.page %}
+                                        <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
+                                        {% else %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('show_test_results', page=page_num, search=search_query) }}">{{ page_num }}</a></li>
+                                        {% endif %}
+                                        {% else %}
+                                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if pagination.has_next %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('show_test_results', page=pagination.next_num, search=search_query) }}">Siguiente</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

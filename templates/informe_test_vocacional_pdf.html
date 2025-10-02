@@ -1,0 +1,698 @@
+{% extends 'base2.html' %}
+
+{% block title %} Informe Test Vocacional{% endblock %}
+{% block css_page %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style type='text/css'>
+        body{
+            font-family: 'Montserrat', sans-serif;
+        }
+        .titulo {
+            margin: 15px 0px 15px 15px;
+            padding: 10px 10px;
+            font-weight: 700;
+        }
+        .titulo-datos {
+            font-weight: bold;
+        }
+        .titulo1 {
+            background-color: #5675CE;
+            font-weight: bold;
+            padding: 5px 0px;
+            color: #fff;
+        }
+        .titulo2 {
+            padding: 5px 0px;
+            background-color: #699df8;
+            font-weight: 700;
+            color: #020203;
+        }
+        .subtitulo {
+            margin: 1px 1px;
+            background-color: #C9DAF8;
+            border: 1px solid #020203;
+            padding: 2px 2px;
+            font-weight: 700;
+            
+        }
+
+        .subtitulo1 {
+            margin: 1px 1px;
+            padding: 2px 2px;
+            border: 1px solid #020203;
+        }
+        .descripcion {
+            display: flex;
+            align-items: center;
+            margin: 1px 60px 1px 1px;
+            padding: 2px 2px; 
+        }
+        .firstcolumn {
+            margin: 1px 1px 1px 10px;
+            padding: 2px 2px;
+        }
+
+        .tablas {
+            padding: 2px 25px;
+        }
+
+        img {
+            display: block;
+            margin: 1px 5px 1px 1px;
+            width: 97%;
+            height: auto;
+            text-align: center;
+        }
+
+        .lastcolumn {
+            flex: 0 0 39.666667%;
+            max-width: 39.666667%;
+        }
+
+        .bolded {
+            font-weight: 700;
+        }
+
+        @media print{
+            .oculto-impresion, .oculto-impresion *{
+                display: none !important;
+                }
+        }
+
+        table, th, td {
+            border: 1px solid;
+            vertical-align: middle; /* centra verticalmente todas las celdas */
+        }
+        td {
+            text-align: center;
+        }
+
+        /* Full-width table with 4 columns and 5 rows
+           Column widths: 2fr 1fr 1fr 2fr -> percentages 33.333%, 16.6667%, 16.6667%, 33.333% */
+        .full-table {
+            width: 100%;
+            max-width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .full-table th,
+        .full-table td {
+            border: 1px solid #020203;
+            padding: 8px;
+            vertical-align: middle; /* asegurar centrado vertical en la tabla completa */
+        }
+        .justify-cell {
+            text-align: justify;
+        }
+        /* no additional rules needed for specific columns because colgroup sets widths */
+
+    </style>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="container">
+    
+    <h5 class="text-center">Informe Test Vocacional y Personalidad</h5>
+    
+    {% for info in context %}
+    <div class="oculto-impresion">
+        <div class="form-check form-check-inline">
+            <!-- <a href="" class="btn btn-primary btn-circle" role="button" ><i class="far fa-edit">Enviar mail</i></a>
+            <a href="#" class="btn btn-success btn-circle" role="button" ><i class="far fa-edit">Enviar Whatsapp</i></a>
+            <button type="button" class="btn btn-success btn-circle" data-toggle="modal" data-target="#whatsappModal">
+                <i class="far fa-edit">Enviar Whatsapp Modal</i>
+            </button>
+            <a href="#" class="btn btn-success btn-circle" role="button" hidden><i class="far fa-edit">Enviar Whatsapp clásico</i></a>
+            -->
+            <a href="#" class="btn btn-danger btn-circle" role="button" ><i class="far fa-edit">Informe PDF</i></a>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-12 titulo1 fw-bold" style="font-weight: bold;">A- Datos Generales</div>
+    </div>
+    <hr>
+    <div class="row">
+    <div class="col-3 titulo-datos col-sm-2">Nombre:</div>
+    <div class="col-6">{{info.datos_info.nombre[0]}}</div>
+    </div>
+    <div class="row">
+        <div class="col-3 titulo-datos col-sm-2">Edad:</div>
+        <div class="col-6">{{info.datos_info.edad[0]}}</div>
+    </div>
+    <div class="row">
+        <div class="col-3 titulo-datos col-sm-2">Fecha Aplicación:</div>
+        <div class="col-6">{{info.datos_onet.created[0].strftime('%d-%m-%Y')}}</div>
+    </div>
+    <hr>
+    
+    <div class="row">
+        <div class="col-12 titulo1 fw-bold" style="font-weight: bold;">B- Resultados</div>
+    </div>
+    <br>
+    <di class="row">
+        <div class="col-12 col-sm-12">
+            <img src="data:image/png;base64,{{ info.grafico_onet|safe }}">
+        </div>
+    </di>
+    <br>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Test O*NET</div>
+    </div>
+    <!-- Tabla -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:33.333%;">
+                    <col style="width:16.6667%;">
+                    <col style="width:16.6667%;">
+                    <col style="width:33.333%;">
+                </colgroup>
+                <thead>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" ></th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">PD</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">Tipo de interes</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" >Descripción</th>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Primera opción</td>
+                        <td>{{info.datos_onet.PD_MAX_ONET_1[0]}}</td>
+                        <td>{{info.datos_onet.Max_Onet_1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_onet.Desc_Max_Onet_1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Segunda opción</td>
+                        <td>{{info.datos_onet.PD_MAX_ONET_2[0]}}</td>
+                        <td>{{info.datos_onet.Max_Onet_2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_onet.Desc_Max_Onet_2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tercera opción</td>
+                        <td>{{info.datos_onet.PD_MAX_ONET_3[0]}}</td>
+                        <td>{{info.datos_onet.Max_Onet_3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_onet.Desc_Max_Onet_3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Zona de trabajo</td>
+                        <td>{{info.datos_onet.zona[0]}}</td>
+                        <td class="justify-cell" colspan="2">{{info.datos_onet.Desc_Zona[0]}}</td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <hr>
+    <div class="row">
+        <div class="col-12 text-center">Ejemplo de carreras de la Zona de trabajo {{info.datos_onet.zona[0]}}, del tipo de interés Empresarial</div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 justify-cell">{{info.datos_onet.Tipo_Trabajo_1[0]}}</div>
+    </div>
+    <br>
+    <hr>
+    <div class="row">
+        <div class="col-12 text-center">Ejemplo de carreras de la Zona de trabajo {{info.datos_onet.zona[0]}}, del tipo de interés Artístico</div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 justify-cell">{{info.datos_onet.Tipo_Trabajo_2[0]}}</div>
+    </div>
+    <br>
+    <hr>
+    <div class="row">
+        <div class="col-12 text-center">Ejemplo de carreras de la Zona de trabajo {{info.datos_onet.zona[0]}}, del tipo de interés Social</div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12 justify-cell">{{info.datos_onet.Tipo_Trabajo_3[0]}}</div>
+    </div>
+    <br>
+    
+    <div class="row">
+        <div class="col-12 text-center">Para una visualización más completa de las carreras, por favor, dirijase al siguiente link: <a href="https://bit.ly/aikumby">https://bit.ly/aikumby</a></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Test NEO-PI R</div>
+    </div>
+    <!-- Tabla NEOPIR -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:33.333%;">
+                    <col style="width:10.6667%;">
+                    <col style="width:10.6667%;">
+                    <col style="width:45.333%;">
+                </colgroup>
+                <thead>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" >Dimensiones</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">Pc</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">Nivel</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" >Descripción</th>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="titulo-datos">Neuroticismo</td>
+                        <td>{{info.datos_neo.PC_NNEO[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_NNEO[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Extraversión</td>
+                        <td>{{info.datos_neo.PC_ENEO[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_ENEO[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Apertura</td>
+                        <td>{{info.datos_neo.PC_ONEO[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_ONEO[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Amabilidad</td>
+                        <td>{{info.datos_neo.PC_ANEO[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_ANEO[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A[0]}}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Responsabilidad</td>
+                        <td>{{info.datos_neo.PC_CNEO[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_CNEO[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C[0]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Tabla NEOPIR subdimensiones -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:33.333%;">
+                    <col style="width:10.6667%;">
+                    <col style="width:10.6667%;">
+                    <col style="width:45.333%;">
+                </colgroup>
+                <thead>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" >Subdimensiones</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">Pc</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center">Nivel</th>
+                <th style="font-weight: bold; background-color: #C9DAF8; border: 1px solid #020203; text-align: center" >Descriptor</th>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="titulo-datos">Ansiedad</td>
+                        <td>{{info.datos_neo.PC_N1[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Hostilidad</td>
+                        <td>{{info.datos_neo.PC_N2[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Depresión</td>
+                        <td>{{info.datos_neo.PC_N3[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Ansiedad Social</td>
+                        <td>{{info.datos_neo.PC_N4[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N4[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N4[0]}}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Impulsividad</td>
+                        <td>{{info.datos_neo.PC_N5[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N5[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N5[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Vulnerabilidad</td>
+                        <td>{{info.datos_neo.PC_N6[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_N6[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_N6[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Cordialidad</td>
+                        <td>{{info.datos_neo.PC_E1[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Gregarismo</td>
+                        <td>{{info.datos_neo.PC_E2[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Asertividad</td>
+                        <td>{{info.datos_neo.PC_E3[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Actividad</td>
+                        <td>{{info.datos_neo.PC_E4[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E4[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E4[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Búsqueda de emociones</td>
+                        <td>{{info.datos_neo.PC_E5[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E5[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E5[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Emociones positivas</td>
+                        <td>{{info.datos_neo.PC_E6[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_E6[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_E6[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Fantasía</td>
+                        <td>{{info.datos_neo.PC_O1[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Estética</td>
+                        <td>{{info.datos_neo.PC_O2[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Sentimientos</td>
+                        <td>{{info.datos_neo.PC_O3[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Acciones</td>
+                        <td>{{info.datos_neo.PC_O4[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O4[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O4[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Ideas</td>
+                        <td>{{info.datos_neo.PC_O5[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O5[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O5[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Valores</td>
+                        <td>{{info.datos_neo.PC_O6[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_O6[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_O6[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Confianza</td>
+                        <td>{{info.datos_neo.PC_A1[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Franqueza</td>
+                        <td>{{info.datos_neo.PC_A2[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Altruismo</td>
+                        <td>{{info.datos_neo.PC_A3[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Actitud conciliadora</td>
+                        <td>{{info.datos_neo.PC_A4[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A4[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A4[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Modestia</td>
+                        <td>{{info.datos_neo.PC_A5[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A5[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A5[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Sensibilidad a los demás</td>
+                        <td>{{info.datos_neo.PC_A6[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_A6[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_A6[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Competencia</td>
+                        <td>{{info.datos_neo.PC_C1[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C1[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C1[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Orden</td>
+                        <td>{{info.datos_neo.PC_C2[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C2[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C2[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Sentido del deber</td>
+                        <td>{{info.datos_neo.PC_C3[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C3[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C3[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Necesidad de logro</td>
+                        <td>{{info.datos_neo.PC_C4[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C4[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C4[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Autodisciplina</td>
+                        <td>{{info.datos_neo.PC_C5[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C5[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C5[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Deliberación</td>
+                        <td>{{info.datos_neo.PC_C6[0]}}</td>
+                        <td>{{info.datos_neo.Nivel_C6[0]}}</td>
+                        <td class="justify-cell">{{info.datos_neo.Desc_Nivel_C6[0]}}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <di class="row">
+        <div class="col-12 col-sm-12">
+            <img src="data:image/png;base64,{{ info.graf_neo_dimen|safe }}">
+        </div>
+    </di>
+    <br>
+    <br>
+    <di class="row">
+        <div class="col-12 col-sm-12">
+            <img src="data:image/png;base64,{{ info.graf_neo_sub|safe }}">
+        </div>
+    </di>
+    <br>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Inventario Valores Rokeach</div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center fw-bold" style="font-weight: bold;">Lista valores terminales</div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">Los valores terminales se orientan hacia estados deseables de existencia. </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">Sus valores terminales son: </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">1 - {{ info.datos_rokeach.Max_Rokeach_Ter_1[0] }} </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">2 - {{ info.datos_rokeach.Max_Rokeach_Ter_2[0] }} </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">3 - {{ info.datos_rokeach.Max_Rokeach_Ter_3[0] }} </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center fw-bold" style="font-weight: bold;">Lista valores instrumentales</div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">Los valores instrumentales son preferencias sobre rasgos de comportamiento deseables para lograr una condición o valor de vida. </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">Sus valores instrumentales son: </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">1 - {{ info.datos_rokeach.Max_Rokeach_Inst_1[0] }} </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">2 - {{ info.datos_rokeach.Max_Rokeach_Inst_2[0] }} </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 ">3 - {{ info.datos_rokeach.Max_Rokeach_Inst_3[0] }} </div>
+    </div>
+    <br>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <div class="row">
+        <div class="col-12 titulo1 fw-bold" style="font-weight: bold;">C - Materiales</div>
+    </div>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Test NEO-PI R</div>
+    </div>
+    <!-- Tabla MANUAL NEOPIR -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:80%;">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td class="titulo-datos">Objetivo</td>
+                        <td class="justify-cell">El test ofrece una medida abreviada de las cinco principales dimensiones de la personalidad y de algunos de las facetas o rasgos que definen cada dimensión.</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Características</td>
+                        <td class="justify-cell">Consta de 240 items con respuestas en escala likert</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Confiabilidad</td>
+                        <td class="justify-cell">Entre 0,86 y 0,92</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br><br>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Test O*NET</div>
+    </div>
+    <!-- Tabla MANUAL ONET -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:80%;">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td class="titulo-datos">Objetivo</td>
+                        <td class="justify-cell">El Perfil de intereses O*NET puede ayudarlo a saber cuáles son sus intereses y cómo se relacionan al mundo del empleo. Puede encontrar lo que le gusta hacer.</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Características</td>
+                        <td class="justify-cell">Consta de 60 items con respuestas en escala likert</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Confiabilidad</td>
+                        <td class="justify-cell">0,8</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br><br>
+    <div class="row">
+        <div class="col-12 titulo2 text-center fw-bold" style="font-weight: bold;">Inventario valores Rokeach</div>
+    </div>
+    <!-- Tabla MANUAL ROKEACH -->
+    <div class="row">
+        <div class="col-12">
+            <table class="full-table" role="table" aria-label="Tabla resumen">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:80%;">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td class="titulo-datos">Objetivo</td>
+                        <td class="justify-cell">Identificar el sistema de valores</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Características</td>
+                        <td class="justify-cell">Se compone de dos listas de 18 valores que la persona tiene que ordenar de acuerdo a su criterio, siendo el primero de mayor importancia y el último de menor importancia para la persona</td>
+                    </tr>
+                    <tr>
+                        <td class="titulo-datos">Confiabilidad</td>
+                        <td class="justify-cell">Entre 0,71 y 0,60</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   <!-- Add Modal Dialog -->
+ <div class="modal fade" id="whatsappModal" role="dialog" tabindex="-1"  aria-labelledby="whatsappModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="whatsappModalLabel">Enviar WhatsApp</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="#" method="POST">
+                <div class="modal-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="envwhatgral" id="isReenvio" name="isReenvio">
+                        <label class="form-check-label" for="isReenvio">
+                          Habilitar reenvío whatsapp
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tabulacion" class="form-label">Tabulaciones necesarias</label>
+                        <input type="number" class="form-control" id="tabulacion" name="tabulacion" ></input>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+ 
+{% endblock %}
+{% block js_page %}
+
+{% endblock %}

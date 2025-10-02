@@ -1,0 +1,47 @@
+{% extends 'base2.html' %}
+
+{% block title %} Descargar Informe Vocacional {% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+  <h3>Descargar Informe Vocacional</h3>
+  {% if nombre %}
+    <p><strong>Nombre:</strong> {{ nombre }}</p>
+  {% endif %}
+  <div class="mb-3">
+    <img src="data:image/png;base64,{{ grafico_onet|safe }}" alt="Grafico O*NET" style="max-width:400px; width:100%;" />
+  </div>
+
+  <button id="downloadPdf" class="btn btn-primary">Descargar PDF</button>
+  <div id="downloadStatus" class="mt-2"></div>
+</div>
+
+{% endblock %}
+
+{% block js_page %}
+<!-- FileSaver.js desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-bG5dQbW6k9+0iD6nG6Nf7w7g1+QfVbGf0bqz0qz2B3gZ2Yp0WmO8q1p3G9Q6uK7v3vZ3bR9X9Y3bR9X9Y3bR9Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+document.getElementById('downloadPdf').addEventListener('click', async function () {
+  const status = document.getElementById('downloadStatus');
+  status.textContent = 'Generando PDF...';
+  try {
+    const res = await fetch(`{{ url_for('informe_vocacional_export', r1_id=r1_id) }}`, { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('Error al generar el PDF');
+    const blob = await res.blob();
+    // Extraer filename del header Content-Disposition si esta presente
+    const cd = res.headers.get('Content-Disposition');
+    let filename = `informe_${r1_id}.pdf`;
+    if (cd) {
+      const m = /filename="?([^";]+)"?/.exec(cd);
+      if (m) filename = m[1];
+    }
+    saveAs(blob, filename);
+    status.textContent = 'Descarga iniciada.';
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Error: ' + err.message;
+  }
+});
+</script>
+{% endblock %}

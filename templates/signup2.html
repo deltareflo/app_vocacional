@@ -1,0 +1,82 @@
+{% extends 'base2.html' %}
+{% block title %}Nuevo usuario{% endblock %}
+{% block navigation %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}{% endblock %}
+
+{% block login %}
+<!-- [ auth-signin ] start -->
+<div class="auth-wrapper">
+	<div class="auth-content container">
+		<div class="card">
+			<div class="row align-items-center">
+				<div class="col-md-6">
+					<div class="card-body">
+						<img src="../static/images/logo-dark.png" alt="" class="img-fluid mb-4">
+						<h4 class="mb-3 f-w-400">Nuevo usuario</h4>
+						<form action="" method="post" novalidate>
+						{{ form.hidden_tag() }}
+						<div class="input-group mb-2">
+							<div class="input-group-prepend">
+								<span class="input-group-text"><i class="feather icon-mail"></i></span>
+							</div>
+							{{ form.email(class_= "form-control", size=64) }}
+<!--							<input type="email" class="form-control" placeholder="Email address">-->
+							{% for error in form.email.errors %}
+                        		<span style="color: red;">{{ error }}</span>
+                        	{% endfor %}
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text"><i class="feather icon-lock"></i></span>
+							</div>
+							{{ form.password(class_= "form-control", size=64) }}<br>
+							{% for error in form.password.errors %}
+								<span style="color: red;">{{ error }}</span>
+							{% endfor %}
+<!--							<input type="password" class="form-control" placeholder="Password">-->
+						</div>
+						
+						<div class="form-group text-left mt-2">
+							<div class="form-floating">
+								{{ form.remember_me() }} {{ form.remember_me.label }}
+<!--								<input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="">-->
+<!--								<label  class="cr"> Recordarme</label>-->
+							</div>
+						</div>
+						{{ form.submit(class_= "btn btn-primary mb-4") }}
+							<!--<button class="btn btn-primary mb-4">Login</button>-->
+						<p class="mb-0 text-muted">No tienes una cuenta? <a href="{{ url_for('signup') }}" class="f-w-400">Signup</a></p>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6 d-none d-md-block">
+					<img src="../static/images/auth-bg.jpg" alt="" class="img-fluid">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- [ auth-signin ] end -->
+{% endblock %}
+<!-- Required Js -->
+<!--<script src="../assets/js/vendor-all.min.js"></script>
+<script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+
+<div class="footer-fab">
+    <div class="b-bg">
+        <i class="fas fa-question"></i>
+    </div>
+    <div class="fab-hover">
+        <ul class="list-unstyled">
+            <li><a href="../doc/index-bc-package.html" target="_blank" data-text="UI Kit" class="btn btn-icon btn-rounded btn-info m-0"><i class="feather icon-layers"></i></a></li>
+            <li><a href="../doc/index.html" target="_blank" data-text="Document" class="btn btn-icon btn-rounded btn-primary m-0"><i class="feather icon feather icon-book"></i></a></li>
+        </ul>
+    </div>
+</div>
+
+
+</body>
+
+</html>-->

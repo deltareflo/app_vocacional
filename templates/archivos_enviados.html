@@ -1,0 +1,38 @@
+{% extends 'base2.html' %}
+
+{% block title %} Archivos enviados {% endblock %}
+
+{% block body %}
+<!-- Card Header - Dropdown -->
+<div class="container">
+    <h1 class="text-center display-1">Informes enviados</h1>
+   
+    <table
+          id="table"
+          data-pagination="true"
+          data-search="true"
+          data-toggle="table"
+          data-show-columns="true"
+          data-locale="es-PY"
+          data-show-columns-toggle-all="true"
+    >   
+        <thead>
+            {% for col in columns %}
+            <th data-sortable="true">{{col}}</th>
+
+            {% endfor %}
+            
+
+        </thead>
+        <tbody>
+            {% for row in datos %}
+        <tr>
+            {% for row_ in row %}  
+                <td>{{row_}}</td>
+            {% endfor %}
+        </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
