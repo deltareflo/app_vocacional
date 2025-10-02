@@ -1,0 +1,478 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+    Test Vocacional
+{% endblock %}
+
+{% block css_page %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1rem 1.5rem;
+        margin-bottom: 0;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    .test-item {
+        margin-bottom: 15px;
+    }
+    .test-item label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .test-item input[type="number"] {
+        width: 80px;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        margin-left: 10px; /* Espacio entre label y input */
+    }
+    .test-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px; /* Reducir el margen entre ítems */
+    }
+    .test-item label {
+        flex-basis: 70%; /* Dar más espacio al label */
+        margin-bottom: 0;
+    }
+    .test-item input[type="number"] {
+        flex-basis: 30%; /* Menos espacio al input */
+    }
+    h5 {
+        font-size: 1.5rem; /* Títulos un poco más grandes */
+        margin-bottom: 1rem;
+    }
+    .order-option label {
+        font-weight: bold; /* Mayor predominio al label en Rokeach */
+        flex-basis: 70%;
+    }
+    .order-option select {
+        flex-basis: 30%;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.875em;
+        margin-top: 5px;
+    }
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+    .form-check-label {
+        margin-bottom: 0;
+    }
+    .order-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .order-option select {
+        margin-left: 10px;
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+    }
+</style>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="pcoded-inner-content">
+    <div class="main-body">
+        <div class="page-wrapper">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            
+					        <img src="../static/images/logo-aikumby.svg" alt="" class="logo-thumb images">
+                            <h5 class="text-center">Test Vocacional</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="customTestForm">
+                                {{ form.csrf_token }}
+                                <div id="step-1" class="form-step">
+                                     <h5 class="text-center">Datos Personales</h5>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="nombre">Nombre</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                            </div>
+                                    </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                    
+                                            <div class="form-group">
+                                                <label for="cedula">Cédula</label>
+                                                <input type="text" class="form-control" id="cedula" name="cedula" required>
+                                            </div>
+                                    </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="sexo">Sexo</label>
+                                        <select class="form-control datos" id="sexo" name="sexo" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Ma">Masculino</option>
+                                            <option value="F">Femenino</option>
+                                            <option value="NB">NB</option>
+                                        </select>
+                                        <div class="invalid-feedback" id="error_sexo"></div>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email">
+                                        <div class="invalid-feedback" id="error_email"></div>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="telefono">Teléfono</label>
+                                                <input type="tel" class="form-control" id="telefono" name="telefono">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <!-- Primer Test: 10 ítems numéricos (0-4) -->
+                                </div>
+
+                                <div id="step-2" class="form-step" style="display:none;">
+                                    <h5 class="text-center mt-4">Test O*NET</h5>
+                                    <h6 class="text-center">Este test consta de 60 preguntas sobre actividades de trabajo que algunas personas realizan en sus empleos.</h6>
+                                    <h6 class="text-center">Lea cada pregunta con atención y decida cómo se sentiría usted al realizar cada tipo de trabajo</h6>
+                                    {% for i in range(1, 61) %}
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group test-item">
+                                                <label for="test1_item{{ i }}">{{ i }}.{{ listItemOneTest[i-1] }}:</label>
+                                                <input type="number" class="form-control test1-input" id="test1_item{{ i }}" name="test1_item{{ i }}" min="0" max="4" required>
+                                                <span class="error-message" id="error_test1_item{{ i }}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <hr>
+                                    <h5 class="text-center mt-4">Zona de trabajo</h5>
+                                    <hr>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <h6 class="text-center">Seleccione la Zona de trabajo que coincide con el tipo de experiencia, educación y capacitación que usted tiene ahora o piensa obtener en el futuro.</h6>
+                                        </div>
+                                    </div>
+                                            <h6 class="text-center">Zona 1: Poca o casi nada de preparación laboral</h6>
+                                    <h6 class="text-center">Zona 2: Algo de preparación laboral</h6>
+                                    <h6 class="text-center">Zona 3: Nivel medio de preparación laboral</h6>
+                                    <h6 class="text-center">Zona 4: Alto nivel de preparación laboral</h6>
+                                    <h6 class="text-center">Zona 5: Extensa preparación laboral</h6>
+                                    <hr>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group test-item">
+                                                <label for="zona">Zona Trabajo:</label>
+                                                <input type="number" class="form-control test1-input" id="zona" name="zona" min="1" max="5" required>
+                                                <span class="error-message" id="error_zona"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="step-3" class="form-step" style="display:none;">
+                                    
+                                    <h5 class="mt-4 text-center">Test NEO-PI-R</h5>
+                                    <h6 class="text-center">Este inventario consta de 240 frases.</h6>
+                                    <h6 class="text-center">Lea cada frase con atención y marque la respuesta que refleje mejor su acuerdo o desacuerdo con lo que dice la frase.</h6>
+                                    <br>
+                                    {% for i in range(1, 241) %}
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group test-item">
+                                                <label for="test2_item{{ i }}">{{ i }}. {{ listItemNeoTest[i-1] }}:</label>
+                                                <input type="number" class="form-control test2-input" id="test2_item{{ i }}" name="test2_item{{ i }}" min="0" max="4" required>
+                                                <span class="error-message" id="error_test2_item{{ i }}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                
+                                </div>
+
+                                <div id="step-4" class="form-step" style="display:none;">
+                                    <h5 class="text-center">Inventario valores Rokeach</h5>
+                                    <h6 class="text-center">A continuación se presentan dos listas de 18 valores en orden alfabético.</h6>
+                                    <h6 class="text-center">Léalos cuidadosamente, ordenelos del 1 al 3 de acuerdo a la importancia que ellos tengan para usted como principios que guían su vida.</h6>
+                                    <h6 class="text-center">El valor más importante irá en primer término y el menos importante en último lugar.</h6>
+                                    <h6 class="text-center">Si usted cambia de parecer sientáse en la libertad de cambiar de orden.</h6>
+                                    <h6 class="text-center">El resultado final mostrará como se siente verdaderamente.</h6>
+                                    {% for test_num in range(1, 3) %}
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {% if test_num == 1 %}
+                                                    <hr>
+                                                    <h6>Lista {{ test_num }} - Valores terminales</h6>
+                                                    <h6>Seleccione 3 valores y ordénelos del 3 al 1, siendo 3 el de menor importancia y 1 el de mayor importancia</h6>
+                                                    <hr>
+                                                    <br>
+                                                    {% for option_num in range(1, 19) %}
+                                                        <div class="order-option">
+                                                            <label>{{ listItemRokeTest[option_num-1] }}</label>
+                                                            <select class="form-control order-select" data-test="{{ test_num }}" name="test3_item{{ test_num }}_option{{ option_num }}">
+                                                                <option value="">-- Seleccionar --</option>
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                            </select>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% elif test_num == 2 %}
+                                                    <hr>
+                                                    <h6>Lista {{ test_num }} - Valores istrumentales</h6>
+                                                    <h6>Seleccione 3 valores y ordénelos del 3 al 1, siendo 3 el de menor importancia y 1 el de mayor importancia</h6>
+                                                    <hr>
+                                                    <br>
+                                                    {% for option_num in range(1, 19) %}
+                                                        <div class="order-option">
+                                                            <label>{{ listItemRoke2Test[option_num-1] }}</label>
+                                                            <select class="form-control order-select" data-test="{{ test_num }}" name="test3_item{{ test_num }}_option{{ option_num }}">
+                                                                <option value="">-- Seleccionar --</option>
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                            </select>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                <span class="error-message" id="error_test3_item{{ test_num }}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                </div>
+
+                                <div class="form-navigation mt-4 text-center">
+                                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="nextPrev(-1)" style="display:none;">Anterior</button>
+                                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Siguiente</button>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none;">Guardar Test</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_page %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentTab = 0; // Current tab is set to be the first tab (0-indexed)
+        showTab(currentTab); // Display the current tab
+
+        function showTab(n) {
+            const x = document.getElementsByClassName("form-step");
+            x[n].style.display = "block";
+            if (n == 0) {
+                document.getElementById("prevBtn").style.display = "none";
+            } else {
+                document.getElementById("prevBtn").style.display = "inline";
+            }
+            if (n == (x.length - 1)) {
+                document.getElementById("nextBtn").style.display = "none";
+                document.getElementById("submitBtn").style.display = "inline";
+            } else {
+                document.getElementById("nextBtn").style.display = "inline";
+                document.getElementById("submitBtn").style.display = "none";
+            }
+            scrollTo(0, 0);
+        }
+
+        window.nextPrev = function(n) {
+            const x = document.getElementsByClassName("form-step");
+            if (n == 1 && !validateForm()) return false;
+            x[currentTab].style.display = "none";
+            currentTab = currentTab + n;
+            if (currentTab >= x.length) {
+                document.getElementById("customTestForm").submit();
+                return false;
+            }
+            showTab(currentTab);
+        }
+
+        function validateForm() {
+            let x, y, i, valid = true;
+            x = document.getElementsByClassName("form-step");
+            y = x[currentTab].getElementsByTagName("input");
+
+            // A simple validation for demonstration. You'll need to expand this.
+            for (i = 0; i < y.length; i++) {
+                if (y[i].hasAttribute("required") && y[i].value == "") {
+                    y[i].className += " invalid";
+                    valid = false;
+                }
+            }
+
+            if (currentTab === 0) {
+                const personalInputs = x[currentTab].querySelectorAll('input[required]');
+                personalInputs.forEach(input => {
+                    if (!input.value) {
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                // validar campo sexo (select) - siempre obligatorio
+                const sexo = x[currentTab].querySelector('#sexo');
+                const sexoError = document.getElementById('error_sexo');
+                if (sexo) {
+                    if (!sexo.value) {
+                        sexo.classList.add('is-invalid');
+                        if (sexoError) sexoError.textContent = 'Seleccione una opción';
+                        valid = false;
+                    } else {
+                        sexo.classList.remove('is-invalid');
+                        if (sexoError) sexoError.textContent = '';
+                    }
+                }
+                // validar email sólo si tiene valor
+                const email = x[currentTab].querySelector('#email');
+                const emailError = document.getElementById('error_email');
+                if (email) {
+                    const val = email.value.trim();
+                    if (val !== '') {
+                        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!re.test(val)) {
+                            email.classList.add('is-invalid');
+                            if (emailError) emailError.textContent = 'Ingrese un correo electrónico válido';
+                            valid = false;
+                        } else {
+                            email.classList.remove('is-invalid');
+                            if (emailError) emailError.textContent = '';
+                        }
+                    } else {
+                        // si está vacío, limpiar estados previos
+                        email.classList.remove('is-invalid');
+                        if (emailError) emailError.textContent = '';
+                    }
+                }
+            } else if (currentTab === 1) {
+                const test1Inputs = x[currentTab].querySelectorAll('.test1-input');
+                test1Inputs.forEach(input => {
+                    const value = parseInt(input.value);
+                    const errorMessageSpan = document.getElementById(`error_${input.id}`);
+                    if (input.id == "zona" && (isNaN(value) || value < 1 || value > 5)) {
+                        errorMessageSpan.textContent = 'El valor debe estar entre 1 y 5.';
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    }
+                    else if (isNaN(value) || value < 0 || value > 4) {
+                        errorMessageSpan.textContent = 'El valor debe estar entre 0 y 4.';
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        errorMessageSpan.textContent = '';
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                
+            } else if (currentTab === 2) {
+                const test2Inputs = x[currentTab].querySelectorAll('.test2-input');
+                test2Inputs.forEach(input => {
+                    const value = parseInt(input.value);
+                    const errorMessageSpan = document.getElementById(`error_${input.id}`);
+                    if (isNaN(value) || value < 0 || value > 4) {
+                        errorMessageSpan.textContent = 'El valor debe estar entre 0 y 4.';
+                        input.classList.add('is-invalid');
+                        valid = false;
+                    } else {
+                        errorMessageSpan.textContent = '';
+                        input.classList.remove('is-invalid');
+                    }
+                });
+            } else if (currentTab === 3) {
+                const orderSelects = x[currentTab].querySelectorAll('.order-select');
+                const selectedValues = {};
+                let itemValid = true;
+
+                for (let testNum = 1; testNum <= 2; testNum++) {
+                    const selects = x[currentTab].querySelectorAll(`.order-select[data-test="${testNum}"]`);
+                    const currentSelectedValues = [];
+                    let filledCount = 0;
+
+                    selects.forEach(select => {
+                        if (select.value !== '') {
+                            currentSelectedValues.push(select.value);
+                            filledCount++;
+                        }
+                    });
+
+                    const uniqueValues = new Set(currentSelectedValues);
+                    const errorMessageSpan = document.getElementById(`error_test3_item${testNum}`);
+                    errorMessageSpan.textContent = '';
+
+                    if (currentSelectedValues.length !== uniqueValues.size) {
+                        errorMessageSpan.textContent = 'No se pueden repetir las opciones seleccionadas.';
+                        itemValid = false;
+                    } else if (filledCount !== 3) {
+                        errorMessageSpan.textContent = 'Debe seleccionar exactamente 3 opciones.';
+                        itemValid = false;
+                    }
+                }
+                if (!itemValid) valid = false;
+            }
+            return valid;
+        }
+
+        const form = document.getElementById('customTestForm');
+        form.addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
