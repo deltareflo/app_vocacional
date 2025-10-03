@@ -623,6 +623,8 @@ def login():
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('inicio')
             return redirect(next_page)
+        else:
+            flash('Usuario o contraseña inválidos', 'error')
     return render_template('auth-signin.html', form=form)
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
