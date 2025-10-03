@@ -8,6 +8,21 @@
 <!-- [ auth-signin ] start -->
 <div class="auth-wrapper">
 	<div class="auth-content container">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					{% if category == "error" %}
+						<div class="alert alert-danger">
+							{{ message }}
+						</div>
+					{% else %}
+						<div class="alert alert-success">
+							{{ message }}
+						</div>
+					{% endif %}
+				{% endfor %}
+			{% endif%}
+		{% endwith %}
 		<div class="card">
 			<div class="row align-items-center">
 				<div class="col-md-6">
