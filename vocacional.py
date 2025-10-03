@@ -131,7 +131,22 @@ def carga_neo_pi_db(id):
     else:
         baremo = "General"
     df_data = pd.DataFrame([data.__dict__])
-    df_data["edad"] = int((pd.to_datetime('today') - pd.to_datetime(df_data['fecha_nacimiento']))/np.timedelta64(1,'Y'))
+    try:
+        # Coerce to Timestamp; df_data['fecha_nacimiento'] may be a single-element Series
+        bd = pd.to_datetime(df_data.loc[0, 'fecha_nacimiento'], errors='coerce')
+        if pd.isna(bd):
+            edad_val = 0
+        else:
+            today = pd.Timestamp.now().normalize()
+            # compute year difference and adjust if birthday hasn't occurred yet this year
+            edad_val = today.year - bd.year - ((today.month, today.day) < (bd.month, bd.day))
+            # guard against negative or absurd values
+            if edad_val < 0:
+                edad_val = 0
+        df_data['edad'] = int(edad_val)
+    except Exception:
+        # Fallback: if anything unexpected happens, set edad to 0 rather than crashing
+        df_data['edad'] = 0
     # Seleccionar solo las columnas que empiezan por 'item_' y ordenarlas
     item_cols = [col for col in df_neo_pi_inicial.columns if isinstance(col, str) and col.startswith('item_')]
     item_cols_sorted = sorted(item_cols, key=_item_key)
@@ -668,4 +683,5 @@ if __name__ == '__main__':
     valores = [55,65,45,70,60,50,40,30,80,90,60,70,50,40,30,55,65,45,70,60,50,40,30,80,90,60,70,50,40,30]
     graf = grafico_linea_discontinua(label, valores, 'Perfil subdimensiones NEOPI-R')
     print(len(label), len(valores))
+
 
