@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import enum
 import uuid
 from time import time
-import jwt
+from itsdangerous import URLSafeTimedSerializer as Serializer, BadSignature, SignatureExpired
 from flask import current_app
 
 def fecha_actual():
@@ -81,9 +81,8 @@ class Usuarios(db.Model, UserMixin):
         db.session.commit()
     
     def get_reset_password_token(self, expires_in=600):
-        return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            current_app.config['SECRET_KEY'], algorithm='HS256')
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'reset_password': self.id})
 
     @staticmethod
     def get_by_id(id):
@@ -93,12 +92,17 @@ class Usuarios(db.Model, UserMixin):
         return Usuarios.query.filter_by(email=email).first()
     @staticmethod
     def verify_reset_password_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            id = jwt.decode(token, current_app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
-        except:
+            data = s.loads(token, max_age=600)
+        except SignatureExpired:
+            # valid token, but expired
             return None
-        return Usuarios.get_by_id(id)
+        except BadSignature:
+            # invalid token
+            return None
+        user_id = data.get('reset_password') if isinstance(data, dict) else None
+        return Usuarios.get_by_id(user_id)
 
 class Examenes(db.Model):
 
