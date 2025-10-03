@@ -19,11 +19,64 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from decorators import admin_required
 from sqlalchemy import desc
 from flask_mail import Mail, Message
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 import io
 import uuid
 
 def insert_contacto():
     pass
+
+def send_email_via_smtp(sender_addr, recipients_list, subject_text, text_body_content, html_body_content, attachments=None,
+                        host=None, port=None, username=None, password=None, use_tls=True, timeout=30):
+    """Send an email explicitly using smtplib and email.mime.
+
+    This is a reusable helper that mimics an explicit yagmail-style connection.
+    attachments: list of tuples (filename, bytes, mime_type)
+    """
+    msg_root = MIMEMultipart('alternative')
+    msg_root['Subject'] = subject_text
+    msg_root['From'] = sender_addr
+    msg_root['To'] = ', '.join(recipients_list)
+
+    # Attach plain and html parts
+    part1 = MIMEText(text_body_content or '', 'plain', 'utf-8')
+    part2 = MIMEText(html_body_content or '', 'html', 'utf-8')
+    msg_root.attach(part1)
+    msg_root.attach(part2)
+
+    # Attach any provided attachments
+    if attachments:
+        for fname, fbytes, fmime in attachments:
+            part = MIMEApplication(fbytes, Name=fname)
+            part['Content-Disposition'] = f'attachment; filename="{fname}"'
+            msg_root.attach(part)
+
+    smtp_host = host or app.config.get('MAIL_SERVER')
+    smtp_port = port or app.config.get('MAIL_PORT')
+    smtp_user = username or app.config.get('MAIL_USERNAME')
+    smtp_pass = password or app.config.get('MAIL_PASSWORD')
+    use_tls_cfg = use_tls if use_tls is not None else app.config.get('MAIL_USE_TLS', True)
+
+    server = smtplib.SMTP(smtp_host, int(smtp_port) if smtp_port is not None else 0, timeout=timeout)
+    try:
+        server.ehlo()
+        if use_tls_cfg:
+            server.starttls()
+            server.ehlo()
+        if smtp_user and smtp_pass:
+            server.login(smtp_user, smtp_pass)
+        server.sendmail(sender_addr, recipients_list, msg_root.as_string())
+    finally:
+        try:
+            server.quit()
+        except Exception:
+            try:
+                server.close()
+            except Exception:
+                pass
 
 
 app = Flask(__name__)
@@ -584,10 +637,10 @@ def reset_password_request():
             token = user.get_reset_password_token()
             # Send email with reset link
             send_password_reset_email(user, token)
-            flash('Check your email for instructions to reset your password')
+            flash('Revisa tu correo para las instrucciones de reseteo de contraseña.')
             return redirect(url_for('login'))
         else:
-            flash('Email address not found')
+            flash('Email no registrado.')
     return render_template('reset_password_request.html', title='Reset Password', form=form)
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -667,18 +720,13 @@ En conjunto con OMAPA y el Consejo Nacional de Ciencia y Tecnología - CONACYT P
         flash(f'Error al guardar en la base de datos.')
 
 
-def send_password_reset_email(user):
-    """Envía un correo con un enlace para restablecer la contraseña al `user` dado.
+def send_password_reset_email(user, token):
+    """Send a password reset email to `user`.
 
-    Usa el token generado por `Usuarios.get_reset_password_token` y las credenciales
-    configuradas en `config.py` (vía Flask-Mail `mail`).
+    Tries Flask-Mail first; on SMTP errors (authentication/disconnect/etc.) falls back
+    to an explicit smtplib-based sender using the same credentials from app config.
     """
-    if user is None or not user.email:
-        return
-    try:
-        token = user.get_reset_password_token()
-    except Exception as e:
-        app.logger.error(f"Error generando token de reset para user {getattr(user, 'id', None)}: {e}")
+    if user is None or not getattr(user, 'email', None):
         return
 
     reset_url = url_for('reset_password', token=token, _external=True)
@@ -686,18 +734,35 @@ def send_password_reset_email(user):
     sender = app.config.get('MAIL_USERNAME') or 'no-reply@example.com'
     recipients = [user.email]
 
-    text_body = f"Hola {getattr(user, 'nombre', '')},\n\nPara restablecer tu contraseña, visita el siguiente enlace:\n{reset_url}\n\nSi no solicitaste este correo, puedes ignorarlo." 
-    html_body = f"<p>Hola {getattr(user, 'nombre', '')},</p>\n<p>Para restablecer tu contraseña, haz click en el siguiente enlace:</p>\n<p><a href=\"{reset_url}\">{reset_url}</a></p>\n<p>Si no solicitaste este correo, puedes ignorarlo.</p>"
+    text_body = f"Hola {getattr(user, 'nombre', '')},\n\nPara restablecer tu contraseña, visita el siguiente enlace:\n{reset_url}\n\nSi no solicitaste este correo, puedes ignorarlo."
+    html_body = f"<p>Hola {getattr(user, 'nombre', '')},</p><p>Para restablecer tu contraseña, haz click en el siguiente enlace:</p><p><a href=\"{reset_url}\">{reset_url}</a></p><p>Si no solicitaste este correo, puedes ignorarlo.</p>"
 
     msg = Message(subject=subject, sender=sender, recipients=recipients)
+    msg.charset = 'utf-8'
     msg.body = text_body
     msg.html = html_body
 
+    
+    # Try sending with Flask-Mail first; if that fails due to SMTP issues, fall back to explicit smtplib.
     try:
         mail.send(msg)
         app.logger.info(f"Enviado correo de reset a {user.email}")
+        return
+    except (SMTPAuthenticationError, SMTPServerDisconnected, SMTPException) as e:
+        app.logger.warning(f"Flask-Mail SMTP issue sending reset email to {user.email}: {e}; attempting explicit SMTP fallback")
     except Exception as e:
-        app.logger.error(f"Error enviando correo de reset a {user.email}: {e}")
+        app.logger.error(f"Unexpected error sending reset email with Flask-Mail to {user.email}: {e}; attempting explicit SMTP fallback")
+
+    # Fallback: explicit SMTP using app config credentials
+    try:
+        send_email_via_smtp(sender, recipients, subject, text_body, html_body, attachments=None,
+                            host=app.config.get('MAIL_SERVER'), port=app.config.get('MAIL_PORT'),
+                            username=app.config.get('MAIL_USERNAME'), password=app.config.get('MAIL_PASSWORD'),
+                            use_tls=app.config.get('MAIL_USE_TLS', True))
+        app.logger.info(f"Reset email sent via explicit smtplib fallback to {user.email}")
+    except Exception as e2:
+        app.logger.error(f"Fallback smtplib failed sending reset email to {user.email}: {e2}")
+
 
 
 @app.route('/envio-mail-total')
