@@ -311,7 +311,7 @@ def informe_vocacional(r1_id):
                     
                     "datos_info":df_info, "datos_neo":df_neopi, "datos_onet":df_onet, "datos_rokeach":df_rokeach})
 
-    return render_template('informe_test_vocacional.html',context=context)
+    return render_template('informe_test_vocacional_pdf.html',context=context)
 
 
 @app.route('/informe-vocacional-download/<string:r1_id>', methods=['GET'])
