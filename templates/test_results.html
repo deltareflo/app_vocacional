@@ -41,6 +41,7 @@
                                                 <td>{{ result.onet_test.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                                 <td>
                                                     <a href="{{ url_for('informe_vocacional', r1_id=result.onet_test.uuid)  }}" class="btn btn-primary btn-sm">Informe</a>
+                                                    <a href="{{ url_for('informe_vocacional_for_pdf', r1_id=result.onet_test.uuid)  }}" class="btn btn-danger btn-sm">PDF</a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
