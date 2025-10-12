@@ -15,8 +15,7 @@ import os
 import pathlib
 from io import BytesIO
 import base64
-from vocacional import grafico_linea_personalidad_pdf, grafico_linea_subdimension_pdf, grafico_bar_pdf, \
-    carga_onet_df, carga_neo_pi_df, carga_rokeach_df
+from vocacional import grafico_linea_personalidad_pdf, grafico_linea_subdimension_pdf, grafico_bar_pdf
 from datetime import datetime
 try:
     import matplotlib
@@ -1452,44 +1451,5 @@ class SamplePDF:
             print(f'PDF guardado en: {out_path}')
 
 
-if __name__ == '__main__':
-    lab_onet = ['R','I','A','S','E','C']
-    val_onets = [45, 30, 60, 20, 10, 5]
-    lab_neo = ['Neuroticismo','Extraversión','Apertura','Amabilidad','Responsabilidad']
-    val_neo = [99, 22, 14, 22, 14]
-    label = ['Ansiedad','Hostilidad','Depresión','Ansiedad Social','Impulsividad','Vulnerabilidad','Cordialidad','Gregarismo','Asertividad','Actividad','Busqueda de emociones','Emociones positivas','Fantasía','Estética','Sentimientos','Acciones','Ideas','Valores','Confianza','Franqueza','Altruismo','Actitud conciliadora','Modestia','Sensibilidad a los demás','Competencia','Orden','Sentido del deber','Necesidad de logro','Autodisciplina','Deliberación']
-    valores = [55,65,45,70,60,50,40,30,80,90,60,70,50,40,30,55,65,45,70,60,50,40,30,80,90,60,70,50,40,30]
-    id = 2193642
-    info, df_onet_pd, df_zona, lista_onet = carga_onet_df(id)
-    info["nombre"] = info["Nombre"]
-    info["created"] = info["Fecha_aplicación"]
-    info["edad"] = info["Edad"]
-    info = info.to_dict(orient='list')
-    df_onet_pd = df_onet_pd.to_dict(orient='list')
-    df_neo_pi_pd, lista_neo_pi = carga_neo_pi_df(id)
-    df_rokeach_pd= carga_rokeach_df(id)
-    df_rokeach_pd = df_rokeach_pd.to_dict(orient='list')
-    grafico_onet = grafico_bar_pdf(lab_onet, lista_onet, "Perfil O*NET")
-    grafico_neopi = grafico_linea_personalidad_pdf(lab_neo, lista_neo_pi[30:] , "Perfil dimension global NEOPI-R")
-    grafico_sub_neo_pi = grafico_linea_subdimension_pdf(label,lista_neo_pi[:30], "Perfil subdimensiones NEOPI-R")
-    df_zona = df_zona.to_dict()
-    df_neo_pi_pd = df_neo_pi_pd.to_dict(orient='list')
-    
-    print(df_onet_pd["zona"][0])
-    print(df_zona[0])
-    contexto = {
-        'info': info,
-        'df_onet_pd': df_onet_pd,
-        'df_neo_pi_pd': df_neo_pi_pd,
-        'df_rokeach_pd': df_rokeach_pd,
-        'lista_onet': lista_onet,
-        'lista_neo_pi': lista_neo_pi,
-        'valores': valores,
-        'grafico_onet': grafico_onet,
-        'graf_neo_dimen': grafico_neopi,
-        'graf_neo_sub': grafico_sub_neo_pi,
-    }
-    # Crear el PDF
-    s = SamplePDF(contexto)
-    print(f'Usando fuente: {s.font_name}')
-    s.build('sample_report.pdf')
+
+
