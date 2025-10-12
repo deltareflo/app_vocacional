@@ -129,7 +129,7 @@
             </button>
             <a href="#" class="btn btn-success btn-circle" role="button" hidden><i class="far fa-edit">Enviar Whatsapp clásico</i></a>
             -->
-            <a href="{{ url_for('informe_vocacional_for_pdf', r1_id=info.datos_onet.uuid)  }}" class="btn btn-danger btn-circle" role="button" ><i class="far fa-edit">Informe PDF</i></a>
+            <a href="{{ url_for('informe_vocacional_for_pdf', r1_id=info.datos_onet.uuid[0])  }}" class="btn btn-danger btn-circle" role="button" ><i class="far fa-edit">Informe PDF</i></a>
         </div>
         
     </div>
@@ -697,5 +697,6 @@
 
 
 {% endblock %}
+
 
 
