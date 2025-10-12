@@ -4,7 +4,7 @@ from flask_weasyprint import render_pdf, HTML
 from flask import Flask, make_response, render_template, request, redirect, url_for, abort,flash,send_file
 import pandas as pd
 from werkzeug.urls import url_parse
-
+import re
 from config import DeveloperConfig
 from models import Usuarios, db, SegUser, ContactoSegUser, ConsultaSegUser, EvalSegUser, EvaluacionTipo, \
     ResultadoSegUser, Tipo, AcompSegUser, InfoSeg, InformeSegUser, Profesionales, ArchivoEnviado, \
@@ -78,6 +78,21 @@ def send_email_via_smtp(sender_addr, recipients_list, subject_text, text_body_co
                 server.close()
             except Exception:
                 pass
+
+def sanitize_filename(filename):
+    """Elimina caracteres no permitidos en nombres de archivos."""
+    # Reemplazar caracteres no permitidos con guion bajo
+    sanitized = re.sub(r'[\\/*?:"<>|]', '_', filename)
+    # Eliminar acentos y caracteres especiales
+    sanitized = re.sub(r'[áàäâ]', 'a', sanitized)
+    sanitized = re.sub(r'[éèëê]', 'e', sanitized)
+    sanitized = re.sub(r'[íìïî]', 'i', sanitized)
+    sanitized = re.sub(r'[óòöô]', 'o', sanitized)
+    sanitized = re.sub(r'[úùüû]', 'u', sanitized)
+    sanitized = re.sub(r'[ñ]', 'n', sanitized)
+    # Eliminar espacios al inicio y final
+    sanitized = sanitized.strip()
+    return sanitized
 
 
 app = Flask(__name__)
@@ -361,7 +376,7 @@ def informe_vocacional_for_pdf(r1_id):
     return send_file(
         buffer,
         as_attachment=True,
-        download_name=f"informe_vocacional_{r1_id}.pdf",
+        download_name=f"informe_vocacional_{sanitize_filename(contexto['info']['nombre'][0])}.pdf",
         mimetype='application/pdf'
     )
 
