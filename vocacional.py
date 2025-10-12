@@ -12,6 +12,7 @@ import matplotlib.font_manager as fm
 from models import DatosTestVocacional, TestONet, TestNeoPIR, TestRokeach
 import matplotlib as mpl
 from matplotlib.figure import Figure
+from datetime import datetime
 
 mpl.use('agg')
 base_path = pathlib.Path(__file__).resolve().parent
@@ -82,17 +83,22 @@ def grafico_bar_alt(labels, values, title=""):
     return graphic
 
 
-def carga_vocacional(id):
+def carga_vocacional(id, ispdf = False):
     df_onet_total, list_onet = carga_onet_db(id)
     df_neo_pi_total, df_datos, lista_neo_dimension = carga_neo_pi_db(id)
     df_rokeach_total = carga_rokeach_db(id)
     label_graf_onet = ['R', 'I', 'A', 'S', 'E', 'C']
-    graphic_onet = grafico_bar_alt(label_graf_onet, list_onet, title="Perfil O*NET)")
+    
     label_graf_neo = ['Neuroticismo', 'Extraversión', 'Apertura', 'Amabilidad', 'Responsabilidad']
     label_graf_neo_sub = ['Ansiedad','Hostilidad','Depresión','Ansiedad Social','Impulsividad','Vulnerabilidad','Cordialidad','Gregarismo','Asertividad','Actividad','Busqueda de emociones','Emociones positivas','Fantasía','Estética','Sentimientos','Acciones','Ideas','Valores','Confianza','Franqueza','Altruismo','Actitud conciliadora','Modestia','Sensibilidad a los demás','Competencia','Orden','Sentido del deber','Necesidad de logro','Autodisciplina','Deliberación']
-    
-    grafico_neo_dimension = grafico_linea_personalidad(label_graf_neo, lista_neo_dimension[30:], title="Perfil Dimensión global NEOPI-R")
-    grafico_neo_subdimension = grafico_linea_subdimension(label_graf_neo_sub, lista_neo_dimension[:30], title="Perfil Subdimensiones NEOPI-R")
+    if ispdf:
+        graphic_onet = grafico_bar_pdf(label_graf_onet, list_onet, title="Perfil O*NET")    
+        grafico_neo_dimension = grafico_linea_personalidad_pdf(label_graf_neo, lista_neo_dimension[30:], title="Perfil Dimensión global NEOPI-R")
+        grafico_neo_subdimension = grafico_linea_subdimension_pdf(label_graf_neo_sub, lista_neo_dimension[:30], title="Perfil Subdimensiones NEOPI-R")
+    else:
+        graphic_onet = grafico_bar_alt(label_graf_onet, list_onet, title="Perfil O*NET")    
+        grafico_neo_dimension = grafico_linea_personalidad(label_graf_neo, lista_neo_dimension[30:], title="Perfil Dimensión global NEOPI-R")
+        grafico_neo_subdimension = grafico_linea_subdimension(label_graf_neo_sub, lista_neo_dimension[:30], title="Perfil Subdimensiones NEOPI-R")
     return df_datos, df_onet_total, df_neo_pi_total, df_rokeach_total, graphic_onet, grafico_neo_dimension, grafico_neo_subdimension
 
 
@@ -673,15 +679,177 @@ def grafico_linea_subdimension(labels, values, title=""):
     plt.close()
     return graphic
 
+
+def grafico_linea_personalidad_pdf(labels, values, title=""):
+    font_path = os.path.join(base_path, 'fonts','static', 'Montserrat-SemiBold.ttf')
+    if os.path.exists(font_path):
+        prop = fm.FontProperties(fname=font_path)
+        plt.rcParams['font.family'] = prop.get_name()
+    else:
+        plt.rcParams['font.family'] = 'sans-serif'
+        prop = None
+    print(f"Font Name lineplot: {plt.rcParams['font.family']}")
+    x = np.arange(len(labels))
+    y = values
+    fig, ax = plt.subplots(figsize=(12, 5))
+    plt.subplots_adjust(left=0.1)
+    fig.subplots_adjust(top=0.90, bottom=0.18, left=0.1, right=0.95)
+    plt.suptitle(title, fontsize=18, fontproperties=prop)
+    # Dibujar líneas horizontales entre 30 y 70
+    for val in range(30, 71, 10):
+        color = "#6EB0C0" if val == 30 or val == 70 else '#CCCCCC'
+        lw = 2 if val == 30 or val == 70 else 1
+        ax.axhline(y=val, color=color, linestyle='--', linewidth=lw, zorder=0)
+    # Línea principal
+    ax.plot(x, y, color="#122DA6", linewidth=2, marker='o', markersize=8, zorder=2)
+    # Etiquetas de los puntos
+    for i, (xi, yi) in enumerate(zip(x, y)):
+        ax.text(xi, yi + 2, str(yi), ha='center', va='bottom', fontsize=10, fontweight='bold', color='grey', fontproperties=prop)
+    ax.set_xticks(x)
+    # Ajustar el primer label desplazándolo a la derecha
+    ticklabels = []
+    for i, label in enumerate(labels):
+        if i == 0:
+            ticklabels.append('\u200A' * 6 + label)  # Unicode thin space para desplazar
+        else:
+            ticklabels.append(label)
+    ax.set_xticklabels(labels, fontproperties=prop, fontweight='bold', fontsize=12)
+    ax.set_ylim([0, 100])
+    ax.set_yticks(np.arange(0, 101, 10))
+    ax.set_yticklabels([str(i) for i in np.arange(0, 101, 10)], fontproperties=prop, fontsize=8)
+    ax.tick_params(axis='x', length=0)
+    ax.tick_params(axis='y', length=0)
+    for s in ['top', 'right', 'left', 'bottom']:
+        ax.spines[s].set_visible(False)
+    #plt.tight_layout()
+    #plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', transparent=True)
+    buffer.seek(0)
+    plt.close()
+    return buffer.read()
+
+def grafico_linea_subdimension_pdf(labels, values, title=""):
+    font_path = os.path.join(base_path, 'fonts','static', 'Montserrat-SemiBold.ttf')
+    if os.path.exists(font_path):
+        prop = fm.FontProperties(fname=font_path)
+        plt.rcParams['font.family'] = prop.get_name()
+    else:
+        plt.rcParams['font.family'] = 'sans-serif'
+        prop = None
+
+    # Dividir en 5 grupos de 6 valores
+    n = 6
+    grupos_labels = [labels[i:i+n] for i in range(0, len(labels), n)]
+    grupos_values = [values[i:i+n] for i in range(0, len(values), n)]
+
+    fig, axes = plt.subplots(1, 5, figsize=(12, 5), sharey=True)
+    fig.subplots_adjust(top=0.85, bottom=0.25, left=0.07, right=0.98, wspace=0.15)
+    fig.suptitle(title, fontsize=18, fontproperties=prop)
+
+    for idx, ax in enumerate(axes):
+        x = np.arange(len(grupos_labels[idx]))
+        y = grupos_values[idx]
+        # Líneas horizontales entre 30 y 70
+        for val in range(30, 71, 10):
+            color = "#6EB0C0" if val == 30 or val == 70 else "#4E4D4D" if val == 50 else '#CCCCCC'
+            lw = 2 if val == 30 or val == 70 else 1
+            ax.axhline(y=val, color=color, linestyle='--', linewidth=lw, zorder=0)
+        # Línea principal
+        ax.plot(x, y, color="#122DA6", linewidth=2, marker='o', markersize=7, zorder=2)
+        # Etiquetas de los puntos
+        for i, (xi, yi) in enumerate(zip(x, y)):
+            ax.text(xi, yi + 2, str(yi), ha='center', va='bottom', fontsize=10, fontweight='bold', color='grey', fontproperties=prop)
+        ax.set_xticks(x)
+        ax.set_xticklabels(grupos_labels[idx], fontproperties=prop, fontweight='bold', fontsize=10, rotation=40, ha='right')
+        ax.set_ylim([0, 100])
+        if idx == 0:
+            ax.set_yticks(np.arange(0, 101, 10))
+            ax.set_yticklabels([str(i) for i in np.arange(0, 101, 10)], fontproperties=prop, fontsize=8)
+            ax.tick_params(axis='y', length=0)
+        else:
+            ax.set_yticks(np.arange(0, 101, 10))
+            ax.set_yticklabels([str(i) for i in np.arange(0, 101, 10)], fontproperties=prop, fontsize=8)
+            ax.tick_params(axis='y', length=0)
+            #ax.set_yticks([])
+            #ax.set_yticklabels([])
+        ax.tick_params(axis='x', length=0)
+        for s in ['top', 'right', 'bottom']:
+            ax.spines[s].set_visible(False)
+        if idx != 0:
+            ax.spines['left'].set_visible(False)
+        else:
+            ax.spines['left'].set_visible(False)  # Opcional: si quieres ocultar también la línea del eje y
+
+    #plt.show()
+    buffer = BytesIO()
+    fig.savefig(buffer, format='png', transparent=True)
+    plt.close()
+    buffer.seek(0)
+    return buffer
+
+
+def grafico_bar_pdf(labels, values, title=""):
+    font_path = os.path.join(base_path, 'fonts','static', 'Montserrat-SemiBold.ttf')
+    if os.path.exists(font_path):
+        fm.fontManager.addfont(font_path)
+        prop = fm.FontProperties(fname=font_path)
+        plt.rcParams['font.family'] = prop.get_name()
+    else:
+        plt.rcParams['font.family'] = 'sans-serif'  # Fallback
+    
+    x = labels
+    y = values
+    colores = ["#27A612","#C00000","#92D050","#7030A0", "#ED7D31", "#002060"]
+    fig, ax = plt.subplots(figsize=(9, 4))
+    fig.subplots_adjust(top=0.90, bottom=0.08, left=0.11, right=0.85)
+    ax.set_title(title,  position=(0.5, 1.1), ha='center', fontproperties=prop)
+    bars = ax.bar(x, y, color=colores)
+    #ax.barh(x, width = y, color=colores)
+    list_patch = []
+    for i in range(len(labels)):
+        patch = mpatches.Patch(color=colores[i], label=labels[i])
+        list_patch.append(patch)
+    #ax.legend(handles=list_patch, loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=2)
+    for s in ['top', 'bottom', 'left', 'right']:
+        ax.spines[s].set_visible(False)
+    # Add annotation to bars
+    """for i in ax.patches:
+        plt.text(i.get_width()+0.2, i.get_y()+0.5,str(round((i.get_width()))),
+                 fontsize=10, fontweight='bold',color='grey')"""
+    
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2, height + 1, str(height),
+                ha='center', va='bottom', fontsize=10, fontweight='bold', color='grey', fontproperties=prop)
+    #ax.set_ylim([0, max(y) + 10])
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, fontproperties=prop, fontweight='bold', fontsize=10)
+    #ax.set_yticks(np.arange(0, max(y)+11, 5))  # Mostrar ticks cada 5 unidades
+    
+    #ax.invert_yaxis()
+    ax.set_ylim([0,40])
+    
+    #ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
+    #plt.xticks([])
+    #plt.yticks([])
+    ax.tick_params(axis='x', length=0)
+    ax.tick_params(axis='y', length=0)
+    
+    buffer = BytesIO()
+    fig.savefig(buffer, format='png', transparent=True)
+    
+    
+    #plt.savefig(buffer, format='png',transparent=True)
+    plt.close()
+    buffer.seek(0)
+    
+    return buffer.read()
+
+
 if __name__ == '__main__':
-    """df = carga_vocacional(2)
-    print(df.head())
-    print(df.iloc[:,-1])"""
-    #graf = grafico_bar_alt(['R','I','A','S','E','C'], [10,20,15,30,17,25], 'Perfil O*NET')
-    #graf = grafico_linea_personalidad(['Neuroticismo','Extraversión','Apertura','Amabilidad','Responsabilidad'], [55,65,45,70,60], 'Perfil Neo PI-R')
-    label = ['Ansiedad','Hostilidad','Depresión','Ansiedad Social','Impulsividad','Vulnerabilidad','Cordialidad','Gregarismo','Asertividad','Actividad','Busqueda de emociones','Emociones positivas','Fantasía','Estética','Sentimientos','Acciones','Ideas','Valores','Confianza','Franqueza','Altruismo','Actitud conciliadora','Modestia','Sensibilidad a los demás','Competencia','Orden','Sentido del deber','Necesidad de logro','Autodisciplina','Deliberación']
-    valores = [55,65,45,70,60,50,40,30,80,90,60,70,50,40,30,55,65,45,70,60,50,40,30,80,90,60,70,50,40,30]
-    graf = grafico_linea_discontinua(label, valores, 'Perfil subdimensiones NEOPI-R')
-    print(len(label), len(valores))
+    df = carga_vocacional(2)
+    
+
 
 
