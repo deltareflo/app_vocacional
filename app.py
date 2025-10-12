@@ -1,7 +1,7 @@
 import datetime
 from smtplib import SMTPAuthenticationError, SMTPException, SMTPServerDisconnected
 from flask_weasyprint import render_pdf, HTML
-from flask import Flask, make_response, render_template, request, redirect, url_for, abort,flash
+from flask import Flask, make_response, render_template, request, redirect, url_for, abort,flash,send_file
 import pandas as pd
 from werkzeug.urls import url_parse
 
@@ -23,6 +23,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+from build_pdf import SamplePDF
 import io
 import uuid
 
@@ -333,17 +334,36 @@ def informe_vocacional_download(r1_id):
 
 @app.route('/informe-vocacional-pdf/<string:r1_id>', methods=['GET'])
 def informe_vocacional_for_pdf(r1_id):
-    df_info,df_onet,df_neopi,df_rokeach, grafico_onet, graf_neo_dimen, graf_neo_sub = carga_vocacional(r1_id)
+    df_info,df_onet,df_neopi,df_rokeach, grafico_onet, graf_neo_dimen, graf_neo_sub = carga_vocacional(r1_id, ispdf=True)
     df_neopi.columns = df_neopi.columns.str.replace(" ", "_")
     df_onet.columns = df_onet.columns.str.replace(" ", "_")
     df_rokeach.columns = df_rokeach.columns.str.replace(" ", "_")
+    df_neopi = df_neopi.to_dict(orient='list')
+    df_onet = df_onet.to_dict(orient='list')
+    df_rokeach = df_rokeach.to_dict(orient='list')
+    df_info = df_info.to_dict(orient='list')
+    contexto = {
+        'info': df_info,
+        'df_onet_pd': df_onet,
+        'df_neo_pi_pd': df_neopi,
+        'df_rokeach_pd': df_rokeach,
+        'grafico_onet': grafico_onet,
+        'graf_neo_dimen': graf_neo_dimen,
+        'graf_neo_sub': graf_neo_sub,
+    }
     
-    context = []
-    context.append({"grafico_onet": grafico_onet, "graf_neo_dimen": graf_neo_dimen, "graf_neo_sub": graf_neo_sub,
-                    
-                    "datos_info":df_info, "datos_neo":df_neopi, "datos_onet":df_onet, "datos_rokeach":df_rokeach})
-
-    return render_template('informe_test_vocacional_pdf.html',context=context)
+    # Crear el PDF en un buffer
+    s = SamplePDF(contexto)
+    buffer = s.build(to_buffer=True)
+    
+    # Retornar el PDF como descarga
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"informe_vocacional_{r1_id}.pdf",
+        mimetype='application/pdf'
+    )
 
 
 @app.route('/informe-vocacional-export/<string:r1_id>', methods=['GET'])
