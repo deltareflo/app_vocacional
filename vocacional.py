@@ -280,65 +280,65 @@ def get_desc(valores, baremo, columna_comparar, columna_recuperar):
 def df_calculo_neo_pi(df, df_baremo):
     # Puntaje Neo PI
     neopi_pd = {
-        "N1": df.iloc[:, 0] + df.iloc[:, 30] + df.iloc[:, 60] + df.iloc[:, 90] + df.iloc[:, 120]\
-            + df.iloc[:,150] + df.iloc[:,180] + df.iloc[:,210],
-        "E1": df.iloc[:, 1] + df.iloc[:, 31] + df.iloc[:, 61] + df.iloc[:, 91] + df.iloc[:, 121]\
+        "N1": 4 - df.iloc[:, 0] + df.iloc[:, 30] + 4 - df.iloc[:, 60] + df.iloc[:, 90] + 4 - df.iloc[:, 120]\
+            + df.iloc[:,150] + 4 - df.iloc[:,180] + df.iloc[:,210],
+        "E1": df.iloc[:, 1] + 4 - df.iloc[:, 31] + df.iloc[:, 61] + 4 - df.iloc[:, 91] + df.iloc[:, 121]\
             + df.iloc[:,151] + df.iloc[:,181] + df.iloc[:,211],
-        "O1": df.iloc[:, 2] + df.iloc[:, 32] + df.iloc[:, 62] + df.iloc[:, 92] + df.iloc[:, 122]\
-            + df.iloc[:,152] + df.iloc[:,182] + df.iloc[:,212],
-        "A1": df.iloc[:, 3] + df.iloc[:, 33] + df.iloc[:, 63] + df.iloc[:, 93] + df.iloc[:, 123]\
+        "O1": df.iloc[:, 2] + 4 - df.iloc[:, 32] + df.iloc[:, 62] + 4 - df.iloc[:, 92] + df.iloc[:, 122]\
+            + 4 - df.iloc[:,152] + 4 - df.iloc[:,182] + 4 - df.iloc[:,212],
+        "A1": 4 - df.iloc[:, 3] + 4 - df.iloc[:, 33] + 4 - df.iloc[:, 63] + df.iloc[:, 93] + 4 - df.iloc[:, 123]\
             + df.iloc[:,153] + df.iloc[:,183] + df.iloc[:,213],
-        "C1": df.iloc[:, 4] + df.iloc[:, 34] + df.iloc[:, 64] + df.iloc[:, 94] + df.iloc[:, 124]\
-            + df.iloc[:,154] + df.iloc[:,184] + df.iloc[:,214],
-        "N2": df.iloc[:, 5] + df.iloc[:, 35] + df.iloc[:, 65] + df.iloc[:, 95] + df.iloc[:, 125]\
-            + df.iloc[:,155] + df.iloc[:,185] + df.iloc[:,215],
-        "E2": df.iloc[:, 6] + df.iloc[:, 36] + df.iloc[:, 66] + df.iloc[:, 96] + df.iloc[:, 126]\
-            + df.iloc[:,156] + df.iloc[:,186] + df.iloc[:,216],
-        "O2": df.iloc[:, 7] + df.iloc[:, 37] + df.iloc[:, 67] + df.iloc[:, 97] + df.iloc[:, 127]\
+        "C1": df.iloc[:, 4] + 4 - df.iloc[:, 34] + df.iloc[:, 64] + 4 - df.iloc[:, 94] + df.iloc[:, 124]\
+            + 4 - df.iloc[:,154] + df.iloc[:,184] + df.iloc[:,214],
+        "N2": df.iloc[:, 5] + 4 - df.iloc[:, 35] + df.iloc[:, 65] + 4 - df.iloc[:, 95] + df.iloc[:, 125]\
+            + 4 - df.iloc[:,155] + df.iloc[:,185] + df.iloc[:,215],
+        "E2": 4 - df.iloc[:, 6] + df.iloc[:, 36] + 4 - df.iloc[:, 66] + df.iloc[:, 96] + 4 - df.iloc[:, 126]\
+            + df.iloc[:,156] + 4 - df.iloc[:,186] + df.iloc[:,216],
+        "O2": 4 - df.iloc[:, 7] + df.iloc[:, 37] + 4 - df.iloc[:, 67] + df.iloc[:, 97] + 4 - df.iloc[:, 127]\
             + df.iloc[:,157] + df.iloc[:,187] + df.iloc[:,217],
-        "A2": df.iloc[:, 8] + df.iloc[:, 38] + df.iloc[:, 68] + df.iloc[:, 98] + df.iloc[:, 128]\
-            + df.iloc[:,158] + df.iloc[:,188] + df.iloc[:,218],
-        "C2": df.iloc[:, 9] + df.iloc[:, 39] + df.iloc[:, 69] + df.iloc[:, 99] + df.iloc[:, 129]\
-            + df.iloc[:,159] + df.iloc[:,189] + df.iloc[:,219],
-        "N3": df.iloc[:, 10] + df.iloc[:, 40] + df.iloc[:, 70] + df.iloc[:, 100] + df.iloc[:, 130]\
+        "A2": df.iloc[:, 8] + 4 - df.iloc[:, 38] + df.iloc[:, 68] + 4 - df.iloc[:, 98] + df.iloc[:, 128]\
+            + 4 - df.iloc[:,158] + 4 - df.iloc[:,188] + 4 - df.iloc[:,218],
+        "C2": 4 - df.iloc[:, 9] + df.iloc[:, 39] + 4 - df.iloc[:, 69] + df.iloc[:, 99] + 4 - df.iloc[:, 129]\
+            + df.iloc[:,159] + 4 - df.iloc[:,189] + 4 - df.iloc[:,219],
+        "N3": 4 - df.iloc[:, 10] + df.iloc[:, 40] + 4 - df.iloc[:, 70] + df.iloc[:, 100] + df.iloc[:, 130]\
             + df.iloc[:,160] + df.iloc[:,190] + df.iloc[:,220],
-        "E3": df.iloc[:, 11] + df.iloc[:, 41] + df.iloc[:, 71] + df.iloc[:, 101] + df.iloc[:, 131]\
-            + df.iloc[:,161] + df.iloc[:,191] + df.iloc[:,221],
-        "O3": df.iloc[:, 12] + df.iloc[:, 42] + df.iloc[:, 72] + df.iloc[:, 102] + df.iloc[:, 132]\
-            + df.iloc[:,162] + df.iloc[:,192] + df.iloc[:,222],
-        "A3": df.iloc[:, 13] + df.iloc[:, 43] + df.iloc[:, 73] + df.iloc[:, 103] + df.iloc[:, 133]\
+        "E3": df.iloc[:, 11] + 4 - df.iloc[:, 41] + df.iloc[:, 71] + 4 - df.iloc[:, 101] + df.iloc[:, 131]\
+            + 4 - df.iloc[:,161] + df.iloc[:,191] + 4 - df.iloc[:,221],
+        "O3": df.iloc[:, 12] + 4 - df.iloc[:, 42] + df.iloc[:, 72] + 4 - df.iloc[:, 102] + df.iloc[:, 132]\
+            + 4 - df.iloc[:,162] + df.iloc[:,192] + df.iloc[:,222],
+        "A3": 4 - df.iloc[:, 13] + df.iloc[:, 43] + 4 - df.iloc[:, 73] + df.iloc[:, 103] + 4 - df.iloc[:, 133]\
             + df.iloc[:,163] + df.iloc[:,193] + df.iloc[:,223],
-        "C3": df.iloc[:, 14] + df.iloc[:, 44] + df.iloc[:, 74] + df.iloc[:, 104] + df.iloc[:, 134]\
+        "C3": df.iloc[:, 14] + 4 - df.iloc[:, 44] + df.iloc[:, 74] + 4 - df.iloc[:, 104] + df.iloc[:, 134]\
             + df.iloc[:,164] + df.iloc[:,194] + df.iloc[:,224],
-        "N4": df.iloc[:, 15] + df.iloc[:, 45] + df.iloc[:, 75] + df.iloc[:, 105] + df.iloc[:, 135]\
-            + df.iloc[:,165] + df.iloc[:,195] + df.iloc[:,225],
-        "E4": df.iloc[:, 16] + df.iloc[:, 46] + df.iloc[:, 76] + df.iloc[:, 106] + df.iloc[:, 136]\
+        "N4": df.iloc[:, 15] + 4 - df.iloc[:, 45] + df.iloc[:, 75] + 4 - df.iloc[:, 105] + df.iloc[:, 135]\
+            + 4 - df.iloc[:,165] + df.iloc[:,195] + df.iloc[:,225],
+        "E4": 4 - df.iloc[:, 16] + df.iloc[:, 46] + 4 - df.iloc[:, 76] + df.iloc[:, 106] + 4 - df.iloc[:, 136]\
             + df.iloc[:,166] + df.iloc[:,196] + df.iloc[:,226],
-        "O4": df.iloc[:, 17] + df.iloc[:, 47] + df.iloc[:, 77] + df.iloc[:, 107] + df.iloc[:, 137]\
-            + df.iloc[:,167] + df.iloc[:,197] + df.iloc[:,227],
-        "A4": df.iloc[:, 18] + df.iloc[:, 48] + df.iloc[:, 78] + df.iloc[:, 108] + df.iloc[:, 138]\
-            + df.iloc[:,168] + df.iloc[:,198] + df.iloc[:,228],
-        "C4": df.iloc[:, 19] + df.iloc[:, 49] + df.iloc[:, 79] + df.iloc[:, 109] + df.iloc[:, 139]\
+        "O4": 4 - df.iloc[:, 17] + df.iloc[:, 47] + 4 - df.iloc[:, 77] + df.iloc[:, 107] + 4 - df.iloc[:, 137]\
+            + df.iloc[:,167] + 4 - df.iloc[:,197] + 4 - df.iloc[:,227],
+        "A4": df.iloc[:, 18] + 4 - df.iloc[:, 48] + df.iloc[:, 78] + 4 - df.iloc[:, 108] + df.iloc[:, 138]\
+            + 4 - df.iloc[:,168] + 4 - df.iloc[:,198] + 4 - df.iloc[:,228],
+        "C4": 4 - df.iloc[:, 19] + df.iloc[:, 49] + 4 - df.iloc[:, 79] + df.iloc[:, 109] + 4 - df.iloc[:, 139]\
             + df.iloc[:,169] + df.iloc[:,199] + df.iloc[:,229],
-        "N5": df.iloc[:, 20] + df.iloc[:, 50] + df.iloc[:, 80] + df.iloc[:, 110] + df.iloc[:, 140]\
-            + df.iloc[:,170] + df.iloc[:,200] + df.iloc[:,230],
-        "E5": df.iloc[:, 21] + df.iloc[:, 51] + df.iloc[:, 81] + df.iloc[:, 111] + df.iloc[:, 141]\
+        "N5": 4 - df.iloc[:, 20] + df.iloc[:, 50] + 4 - df.iloc[:, 80] + df.iloc[:, 110] + 4 - df.iloc[:, 140]\
+            + df.iloc[:,170] + df.iloc[:,200] + 4 - df.iloc[:,230],
+        "E5": df.iloc[:, 21] + 4 - df.iloc[:, 51] + df.iloc[:, 81] + 4 - df.iloc[:, 111] + df.iloc[:, 141]\
             + df.iloc[:,171] + df.iloc[:,201] + df.iloc[:,231],
-        "O5": df.iloc[:, 22] + df.iloc[:, 52] + df.iloc[:, 82] + df.iloc[:, 112] + df.iloc[:, 142]\
-            + df.iloc[:,172] + df.iloc[:,202] + df.iloc[:,232],
-        "A5": df.iloc[:, 23] + df.iloc[:, 53] + df.iloc[:, 83] + df.iloc[:, 113] + df.iloc[:, 143]\
-            + df.iloc[:,173] + df.iloc[:,203] + df.iloc[:,233],
-        "C5": df.iloc[:, 24] + df.iloc[:, 54] + df.iloc[:, 84] + df.iloc[:, 114] + df.iloc[:, 144]\
-            + df.iloc[:,174] + df.iloc[:,204] + df.iloc[:,234],
-        "N6": df.iloc[:, 25] + df.iloc[:, 55] + df.iloc[:, 85] + df.iloc[:, 115] + df.iloc[:, 145]\
-            + df.iloc[:,175] + df.iloc[:,205] + df.iloc[:,235],
-        "E6": df.iloc[:, 26] + df.iloc[:, 56] + df.iloc[:, 86] + df.iloc[:, 116] + df.iloc[:, 146]\
-            + df.iloc[:,176] + df.iloc[:,206] + df.iloc[:,236],
-        "O6": df.iloc[:, 27] + df.iloc[:, 57] + df.iloc[:, 87] + df.iloc[:, 117] + df.iloc[:, 147]\
-            + df.iloc[:,177] + df.iloc[:,207] + df.iloc[:,237],
-        "A6": df.iloc[:, 28] + df.iloc[:, 58] + df.iloc[:, 88] + df.iloc[:, 118] + df.iloc[:, 148]\
+        "O5": df.iloc[:, 22] + 4 - df.iloc[:, 52] + df.iloc[:, 82] + 4 - df.iloc[:, 112] + df.iloc[:, 142]\
+            + 4 - df.iloc[:,172] + df.iloc[:,202] + df.iloc[:,232],
+        "A5": 4 - df.iloc[:, 23] + df.iloc[:, 53] + 4 - df.iloc[:, 83] + df.iloc[:, 113] + 4 - df.iloc[:, 143]\
+            + df.iloc[:,173] + df.iloc[:,203] + 4 - df.iloc[:,233],
+        "C5": df.iloc[:, 24] + 4 - df.iloc[:, 54] + df.iloc[:, 84] + 4 - df.iloc[:, 114] + df.iloc[:, 144]\
+            + 4 - df.iloc[:,174] + 4 - df.iloc[:,204] + df.iloc[:,234],
+        "N6": df.iloc[:, 25] + 4 - df.iloc[:, 55] + df.iloc[:, 85] + 4 - df.iloc[:, 115] + df.iloc[:, 145]\
+            + 4 - df.iloc[:,175] + 4 - df.iloc[:,205] + 4 - df.iloc[:,235],
+        "E6": 4 - df.iloc[:, 26] + df.iloc[:, 56] + 4 - df.iloc[:, 86] + df.iloc[:, 116] + 4 - df.iloc[:, 146]\
+            + df.iloc[:,176] + 4 - df.iloc[:,206] + df.iloc[:,236],
+        "O6": 4 - df.iloc[:, 27] + df.iloc[:, 57] + 4 - df.iloc[:, 87] + df.iloc[:, 117] + 4 - df.iloc[:, 147]\
+            + df.iloc[:,177] + 4 - df.iloc[:,207] + 4 - df.iloc[:,237],
+        "A6": df.iloc[:, 28] + 4 - df.iloc[:, 58] + df.iloc[:, 88] + 4 - df.iloc[:, 118] + df.iloc[:, 148]\
             + df.iloc[:,178] + df.iloc[:,208] + df.iloc[:,238],
-        "C6": df.iloc[:, 29] + df.iloc[:, 59] + df.iloc[:, 89] + df.iloc[:, 119] + df.iloc[:, 149]\
+        "C6": 4 - df.iloc[:, 29] + df.iloc[:, 59] + 4 - df.iloc[:, 89] + df.iloc[:, 119] + 4 - df.iloc[:, 149]\
             + df.iloc[:,179] + df.iloc[:,209] + df.iloc[:,239],
     }
     df_pd_neo = pd.DataFrame(neopi_pd)
@@ -850,6 +850,7 @@ def grafico_bar_pdf(labels, values, title=""):
 if __name__ == '__main__':
     df = carga_vocacional(2)
     
+
 
 
 
