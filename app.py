@@ -12,7 +12,7 @@ from models import Usuarios, db, SegUser, ContactoSegUser, ConsultaSegUser, Eval
 from dataframe_all import dataframe_p1, cambio_baremo_one_p1, p1_dict_one, dataframe_p2, cambio_baremo_one_p2, \
     dataframe_p3, dataframe_s3, cambio_baremo_one_s3, cambio_baremo_one_p3, dataframe_s2, cambio_baremo_one_s2, \
         valores_neo
-from vocacional import carga_vocacional
+from vocacional import carga_vocacional, carga_onet, carga_neo_pi, carga_rokeach
 from forms import EnvioMailForm, SignupForm, LoginForm, ContactoForm, SegForm, ConsultaForm, EvalForm, EvalTipoForm, ResultadoForm, \
     TipoAcompForm, AcompForm, InfoForm, ProfeForm, RavenGral, CustomTestForm, TestItemForm, ResetPasswordForm, ResetPasswordRequestForm
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
@@ -438,6 +438,190 @@ def informe_vocacional_pdf(r1_id):
     response.headers['Content-Disposition'] = f'attachment; filename={nombre}.pdf'
     return response
 
+
+@app.route('/import-cedula', methods=['GET', 'POST'])
+@login_required
+def import_by_cedula():
+    """Simple view that accepts a cedula, loads remote test sheets using the
+    non-DB loaders (carga_onet, carga_neo_pi, carga_rokeach) and inserts the
+    data into the local DB tables: DatosTestVocacional, TestONet, TestNeoPIR,
+    TestRokeach. If a DatosTestVocacional with the same cedula exists we will
+    link the imported tests to that record and update basic personal fields.
+    """
+    if request.method == 'POST':
+        cedula = request.form.get('cedula')
+        if not cedula:
+            flash('Por favor ingrese una cédula válida.', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        # Load remote sheets
+        try:
+            cedula = str(cedula).strip()
+            cedula = int(cedula) if str(cedula).isdigit() else cedula
+            info_df, df_onet, df_zona = carga_onet(cedula)
+            df_neo = carga_neo_pi(cedula)
+            df_rokeach = carga_rokeach(cedula)
+        except Exception as e:
+            flash(f'Error al cargar datos remotos: {e}', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        # Extract personal info from info_df (first row)
+        nombre = None
+        sexo = None
+        fecha_nac = None
+        email = None
+        telefono = None
+        try:
+            print(info_df)
+            row = info_df.iloc[0, :]  # first row
+            print(row)
+            # try several common column names (case-insensitive)
+            cols_lc = {c.lower(): c for c in info_df.columns}
+            print(cols_lc)
+            if 'nombre' in cols_lc:
+                nombre = row[cols_lc['nombre']]
+            else:
+                # try first available column as fallback
+                nombre = row.iloc[0]
+
+            for key in ('sexo', 'genero', 'sexo/ género', 'gender'):
+                if key in cols_lc:
+                    sexo = row[cols_lc[key]]
+                    break
+
+            for key in ('fecha_nacimiento', 'fecha nacimiento', 'nacimiento', 'dob'):
+                if key in cols_lc:
+                    raw = row[cols_lc[key]]
+                    try:
+                        fecha_nac = pd.to_datetime(raw, errors='coerce').date()
+                    except Exception:
+                        fecha_nac = None
+                    break
+
+            for key in ('email', 'mail'):
+                if key in cols_lc:
+                    email = row[cols_lc[key]]
+                    break
+
+            for key in ('telefono', 'teléfono', 'phone'):
+                if key in cols_lc:
+                    telefono = row[cols_lc[key]]
+                    break
+        except Exception:
+            # keep None values if anything unexpected
+            print('Error extrayendo datos personales')
+
+        # Look up existing person by cedula (prefer existing)
+        existing = None
+        try:
+            existing = DatosTestVocacional.query.filter_by(cedula=int(cedula)).first()
+        except Exception:
+            existing = DatosTestVocacional.query.filter_by(cedula=cedula).first()
+
+        if existing is None:
+            personal = DatosTestVocacional(
+                nombre=nombre or '',
+                cedula=int(cedula) if str(cedula).isdigit() else cedula,
+                sexo=sexo or '',
+                fecha_nacimiento=fecha_nac or None,
+                email=email or None,
+                telefono=int(telefono) if telefono and str(telefono).isdigit() else None,
+            )
+            db.session.add(personal)
+            db.session.flush()
+        else:
+            personal = existing
+            # update some fields if we found new values
+            if nombre:
+                personal.nombre = nombre
+            if sexo:
+                personal.sexo = sexo
+            if fecha_nac:
+                personal.fecha_nacimiento = fecha_nac
+            if email:
+                personal.email = email
+            if telefono and str(telefono).isdigit():
+                personal.telefono = int(telefono)
+
+        # Create a submission UUID to link the tests
+        submission_uuid = str(uuid.uuid4())
+
+        # Persist ONET
+        try:
+            onet_payload = {'id_user': personal.id, 'uuid': submission_uuid}
+            # df_onet may be a DataFrame: get first row values in order
+            if df_onet is not None and hasattr(df_onet, 'iloc'):
+                first = df_onet.iloc[0]
+                # flatten values and assign to item_1..item_60
+                vals = list(first.values)
+                for i in range(1, 61):
+                    onet_payload[f'item_{i}'] = int(vals[i-1]) if i-1 < len(vals) and pd.notnull(vals[i-1]) else 0
+            else:
+                for i in range(1, 61):
+                    onet_payload[f'item_{i}'] = 0
+            # zone
+            try:
+                zona_val = df_zona.iloc[0] if hasattr(df_zona, 'iloc') else df_zona
+                onet_payload['zona'] = int(zona_val) if pd.notnull(zona_val) else 0
+            except Exception:
+                onet_payload['zona'] = 0
+
+            new_onet = TestONet(**onet_payload)
+            db.session.add(new_onet)
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error guardando Test O*NET: {e}', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        # Persist NEO-PI-R
+        try:
+            neo_payload = {'id_user': personal.id, 'uuid': submission_uuid}
+            if df_neo is not None and hasattr(df_neo, 'iloc'):
+                first = df_neo.iloc[0]
+                vals = list(first.values)
+                for i in range(1, 241):
+                    neo_payload[f'item_{i}'] = int(vals[i-1]) if i-1 < len(vals) and pd.notnull(vals[i-1]) else 0
+            else:
+                for i in range(1, 241):
+                    neo_payload[f'item_{i}'] = 0
+            new_neo = TestNeoPIR(**neo_payload)
+            db.session.add(new_neo)
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error guardando Test NEO-PI-R: {e}', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        # Persist Rokeach
+        try:
+            rok_payload = {'id_user': personal.id, 'uuid': submission_uuid}
+            if df_rokeach is not None and hasattr(df_rokeach, 'iloc'):
+                first = df_rokeach.iloc[0]
+                vals = list(first.values)
+                for i in range(1, 37):
+                    rok_payload[f'item_{i}'] = int(vals[i-1]) if i-1 < len(vals) and pd.notnull(vals[i-1]) else 0
+            else:
+                for i in range(1, 37):
+                    rok_payload[f'item_{i}'] = 0
+            new_rok = TestRokeach(**rok_payload)
+            db.session.add(new_rok)
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error guardando Test Rokeach: {e}', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        # Commit all
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error final al guardar en base de datos: {e}', 'danger')
+            return redirect(url_for('import_by_cedula'))
+
+        flash('Datos importados y guardados exitosamente.', 'success')
+        return redirect(url_for('show_vocacional_results'))
+
+    # GET -> render simple form
+    return render_template('import_by_cedula.html')
 
 @app.route('/raven-gral-excel')
 def informe_raven_excel():
