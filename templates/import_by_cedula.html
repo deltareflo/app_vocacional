@@ -1,0 +1,14 @@
+{% extends 'base2.html' %}
+{% block body %}
+<div class="container mt-4">
+  <h3>Importar datos por Cédula</h3>
+  <form method="post">
+    <div class="form-group">
+      <label for="cedula">Cédula</label>
+      <input type="text" class="form-control" id="cedula" name="cedula" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Importar</button>
+    <a href="{{ url_for('inicio') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
