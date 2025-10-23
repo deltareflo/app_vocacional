@@ -174,30 +174,30 @@ def carga_rokeach_db(id):
 def carga_onet(id):
     url ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRRUQM0cyfC0M2jlzV9cwfQ-4L1tjCirLQ9tWLoieXAs6ZwJK_X__Ew-YOUJMMg9BP3A55G2pNm8Knd/pub?output=csv"
     df = cargar_dataframe(url)
-    df = df[df['1'] == id]
+    df = df[df['Cédula (sin espacios ni puntos)'] == id]
     info = df.iloc[:,0:9]
     df_onet = df.iloc[:,9:-1]
     df_zona = df.iloc[:,-1]
-    df_onet_pd, lista_onet = df_calculo_onet(df_onet, df_zona)
-    return df_onet_pd, lista_onet
+    #df_onet_pd, lista_onet = df_calculo_onet(df_onet, df_zona)
+    return info, df_onet, df_zona
 
 def carga_neo_pi(id, baremo="General"):
     url ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXNTEeZii1cRu2M6A6izfKbrPkY1uPdafQofddJG8uxxKd5JpJqQ6nD1ROFD4yb2jPpz06Lsl_CMtF/pub?output=csv"
     df = cargar_dataframe(url)
-    df = df[df['1'] == id]
+    df = df[df['Cédula  (sin espacios ni puntos)'] == id]
     info = df.iloc[:,0:4]
     df_neo_pi = df.iloc[:,4:]
-    df_neo_pi_pd = df_calculo_neo_pi(df_neo_pi, baremo)
-    return df_neo_pi_pd
+    #df_neo_pi_pd = df_calculo_neo_pi(df_neo_pi, baremo)
+    return df_neo_pi
 
 def carga_rokeach(id, baremo="General"):
-    url ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRk9bX4Yk3eX1YH"
+    url ="https://docs.google.com/spreadsheets/d/e/2PACX-1vRcnJ6SAkwy_rE7bICtO9XPkYuGO5c7zMCxpmVg5boN95toit9VQv_-ePQ0ASnAG_eZn552kmBTPbOL/pub?output=csv"
     df = cargar_dataframe(url)
-    df = df[df['1'] == id]
+    df = df[df['C.I.  (sin espacios ni puntos)'] == id]
     info = df.iloc[:,0:4]
     df_rokeach = df.iloc[:,4:]
-    df_rokeach_pd = df_calculo_rokeach(df_rokeach, baremo)
-    return df_rokeach_pd
+    #df_rokeach_pd = df_calculo_rokeach(df_rokeach, baremo)
+    return df_rokeach
 
 
 def df_calculo_onet(df, df_zona):
@@ -850,6 +850,7 @@ def grafico_bar_pdf(labels, values, title=""):
 if __name__ == '__main__':
     df = carga_vocacional(2)
     
+
 
 
 
