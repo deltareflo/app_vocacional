@@ -286,7 +286,7 @@ def df_calculo_neo_pi(df, df_baremo):
             + df.iloc[:,151] + df.iloc[:,181] + df.iloc[:,211],
         "O1": df.iloc[:, 2] + 4 - df.iloc[:, 32] + df.iloc[:, 62] + 4 - df.iloc[:, 92] + df.iloc[:, 122]\
             + 4 - df.iloc[:,152] + 4 - df.iloc[:,182] + 4 - df.iloc[:,212],
-        "A1": 4 - df.iloc[:, 3] + 4 - df.iloc[:, 33] + 4 - df.iloc[:, 63] + df.iloc[:, 93] + 4 - df.iloc[:, 123]\
+        "A1": 4 - df.iloc[:, 3] + df.iloc[:, 33] + 4 - df.iloc[:, 63] + df.iloc[:, 93] + 4 - df.iloc[:, 123]\
             + df.iloc[:,153] + df.iloc[:,183] + df.iloc[:,213],
         "C1": df.iloc[:, 4] + 4 - df.iloc[:, 34] + df.iloc[:, 64] + 4 - df.iloc[:, 94] + df.iloc[:, 124]\
             + 4 - df.iloc[:,154] + df.iloc[:,184] + df.iloc[:,214],
@@ -850,6 +850,7 @@ def grafico_bar_pdf(labels, values, title=""):
 if __name__ == '__main__':
     df = carga_vocacional(2)
     
+
 
 
 
