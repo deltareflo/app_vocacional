@@ -546,16 +546,16 @@ def df_calculo_rokeach(df):
     df_rok_inst = df_rok_inst .sort_values(by=0, axis=1)
     df_rok_ter = df_rok_ter.sort_values(by=0, axis=1)
     rokeach_max_inst = {
-        "Max Rokeach Inst 1": [df_rok_inst.columns[-1]],
-        "Max Rokeach Inst 2": [df_rok_inst.columns[-2]],
-        "Max Rokeach Inst 3": [df_rok_inst.columns[-3]],
+        "Max Rokeach Ter 1": [df_rok_inst.columns[-3]],
+        "Max Rokeach Ter 2": [df_rok_inst.columns[-2]],
+        "Max Rokeach Ter 3": [df_rok_inst.columns[-1]],
     }
     df_rokeach_max_inst = pd.DataFrame(rokeach_max_inst)
     
     rokeach_max_ter = {
-        "Max Rokeach Ter 1": [df_rok_ter.columns[-1]],
-        "Max Rokeach Ter 2": [df_rok_ter.columns[-2]],
-        "Max Rokeach Ter 3": [df_rok_ter.columns[-3]],
+        "Max Rokeach Inst 1": [df_rok_ter.columns[-3]],
+        "Max Rokeach Inst 2": [df_rok_ter.columns[-2]],
+        "Max Rokeach Inst 3": [df_rok_ter.columns[-1]],
     }
     df_rokeach_max_ter = pd.DataFrame(rokeach_max_ter)
     
@@ -850,6 +850,7 @@ def grafico_bar_pdf(labels, values, title=""):
 if __name__ == '__main__':
     df = carga_vocacional(2)
     
+
 
 
 
